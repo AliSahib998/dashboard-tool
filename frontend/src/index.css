@@ -1,0 +1,86 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #f5f6fa;
+}
+
+.card-grid-item {
+  background: #fff;
+  border: 1px solid #e8e8ef;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.card-grid-item .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f0f0f5;
+  font-weight: 600;
+  min-height: 40px;
+}
+
+.card-grid-item .card-header .drag-handle {
+  cursor: move;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.card-grid-item .card-body {
+  flex: 1;
+  min-height: 0;
+  padding: 8px;
+  overflow: auto;
+}
+
+.number-viz {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.number-viz .value {
+  font-size: 40px;
+  font-weight: 700;
+  color: #1f2a44;
+}
+
+.number-viz .label {
+  color: #8a8fa3;
+}
+
+.schema-tree {
+  font-size: 13px;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.filter-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-label {
+  font-size: 12px;
+  color: #6b7085;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

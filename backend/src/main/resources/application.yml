@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: birbank-dashboard
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/dashboard}
+    username: ${DB_USER:dashboard}
+    password: ${DB_PASSWORD:dashboard}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+
+server:
+  port: ${PORT:8095}
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        same-site: lax
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+app:
+  # Used to encrypt data source passwords at rest. Set a strong value in every real environment.
+  secret-key: ${SECRET_KEY:change-me-change-me-change-me-32b}
+  admin:
+    email: ${ADMIN_EMAIL:admin@birbank.local}
+    password: ${ADMIN_PASSWORD:admin123}
+  sample-db:
+    url: ${SAMPLE_DB_URL:jdbc:postgresql://localhost:5434/bank_sample}
+    username: ${SAMPLE_DB_USER:dashboard_reader}
+    password: ${SAMPLE_DB_PASSWORD:reader}
+  sample-mongo:
+    url: ${SAMPLE_MONGO_URL:mongodb://localhost:27018/bank_events?authSource=bank_events}
+    username: ${SAMPLE_MONGO_USER:dashboard_reader}
+    password: ${SAMPLE_MONGO_PASSWORD:reader}
+  query:
+    max-rows: ${QUERY_MAX_ROWS:10000}
+    timeout-seconds: ${QUERY_TIMEOUT_SECONDS:60}

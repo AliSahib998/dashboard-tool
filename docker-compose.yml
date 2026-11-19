@@ -1,0 +1,79 @@
+name: birbank-dashboard
+
+services:
+  app-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: dashboard
+      POSTGRES_USER: dashboard
+      POSTGRES_PASSWORD: dashboard
+    ports:
+      - "5433:5432"
+    volumes:
+      - app-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dashboard -d dashboard"]
+      interval: 5s
+      retries: 10
+
+  sample-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: bank_sample
+      POSTGRES_USER: sample_admin
+      POSTGRES_PASSWORD: sample_admin
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./docker/sample-db:/docker-entrypoint-initdb.d:ro
+      - sample-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sample_admin -d bank_sample"]
+      interval: 5s
+      retries: 10
+
+  sample-mongo:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: bank_events
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./docker/sample-mongo:/docker-entrypoint-initdb.d:ro
+      - sample-mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      retries: 20
+
+  backend:
+    profiles: ["full"]
+    build: ./backend
+    environment:
+      DB_URL: jdbc:postgresql://app-db:5432/dashboard
+      DB_USER: dashboard
+      DB_PASSWORD: dashboard
+      SAMPLE_DB_URL: jdbc:postgresql://sample-db:5432/bank_sample
+      SAMPLE_MONGO_URL: mongodb://sample-mongo:27017/bank_events?authSource=bank_events
+      SECRET_KEY: ${SECRET_KEY:-change-me-change-me-change-me-32b}
+    ports:
+      - "8095:8095"
+    depends_on:
+      app-db: { condition: service_healthy }
+      sample-db: { condition: service_healthy }
+      sample-mongo: { condition: service_healthy }
+
+  frontend:
+    profiles: ["full"]
+    build: ./frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  app-db-data:
+  sample-db-data:
+  sample-mongo-data:
